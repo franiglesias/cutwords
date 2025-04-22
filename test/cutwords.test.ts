@@ -19,6 +19,22 @@ class Digraphs {
     }
 }
 
+class InseparableGroups {
+    private groups = ['bl', 'br', 'cl', 'cr', 'dr', 'fl', 'fr', 'gl', 'kl', 'gr', 'pl', 'pr', 'tr']
+
+    includes(candidate: string) {
+        return this.groups.includes(candidate)
+    }
+}
+
+class Diptongues {
+    private diptongues = ['ua', 'ue', 'ui', 'uo', 'ia', 'ie', 'io', 'iu', 'au', 'eu', 'iu', 'ou', 'ai', 'ei', 'oi', 'ui']
+
+    contains(candidate: string) {
+        return this.diptongues.includes(candidate)
+    }
+}
+
 class Word {
     private word: string;
 
@@ -36,27 +52,34 @@ class Word {
 
     hasDigraphAfter(pos: number): boolean {
         const digraphs = new Digraphs()
-        let candidate = this.substr(pos, 2);
+        let candidate = this.nextSubstr(pos, 2);
         return digraphs.includes(candidate);
     }
 
     hasInseparableGroupAfter(pos: number): boolean {
-        const groups = ['bl', 'br', 'cl', 'cr', 'dr', 'fl', 'fr', 'gl', 'kl', 'gr', 'pl', 'pr', 'tr']
-        return groups.includes(this.substr(pos, 2));
-    }
-
-    private substr(pos: number, size: number) {
-        return this.word.substring(pos + 1, pos + 1 + size);
+        const groups = new InseparableGroups()
+        return groups.includes(this.nextSubstr(pos, 2));
     }
 
     hasConsonantsAfter(pos: number, size: number) {
         const vowels = new Vowels();
         const items = this
-            .substr(pos, size)
+            .nextSubstr(pos, size)
             .split('')
             .filter(item => !vowels.includes(item))
 
         return items.length == size
+    }
+
+    isDiptongue(pos: number) {
+        const diptongues = new Diptongues()
+        const candidate = this.word.substring(pos, pos + 2);
+        return diptongues.contains(candidate);
+
+    }
+
+    private nextSubstr(pos: number, size: number) {
+        return this.word.substring(pos + 1, pos + 1 + size);
     }
 }
 
@@ -81,10 +104,14 @@ class SyllableCutter {
                     part += ''
                 } else if (word.hasInseparableGroupAfter(pos)) {
                     part += ''
+                } else if (word.isDiptongue(pos)) {
+                    part += lettersQueue.shift()!
                 } else if (word.hasConsonantsAfter(pos, 3)) {
                     part += lettersQueue.shift()! + lettersQueue.shift()!;
                 } else if (word.hasConsonantsAfter(pos, 2)) {
                     part += lettersQueue.shift();
+                } else {
+                    part += ''
                 }
                 parts.push(part)
                 part = ''
@@ -169,6 +196,55 @@ describe('SyllableCutter', () => {
             {word: 'tecla', expected: ['te', 'cla']},
             {word: 'sacro', expected: ['sa', 'cro']},
             {word: 'madre', expected: ['ma', 'dre']},
+        ]
+
+        examples.forEach(
+            (example) => {
+                it(`should separate ${example.word} as ${example.expected}`, () => {
+                    expect(cutter.cut(example.word)).toEqual(example.expected)
+                });
+            }
+        )
+    });
+
+    describe('Rule 4: four consonants between vowels, separate two - two', () => {
+        const examples: { word: string; expected: string[] }[] = [
+            {word: 'transplante', expected: ['trans', 'plan', 'te']},
+            {word: 'construir', expected: ['cons', 'truir']},
+            {word: 'abstracto', expected: ['abs', 'trac', 'to']},
+            {word: 'obstruir', expected: ['obs', 'truir']},
+
+        ]
+
+        examples.forEach(
+            (example) => {
+                it(`should separate ${example.word} as ${example.expected}`, () => {
+                    expect(cutter.cut(example.word)).toEqual(example.expected)
+                });
+            }
+        )
+    });
+
+    describe('Rule 5: diptongue with i, u', () => {
+        const examples: { word: string; expected: string[] }[] = [
+            {word: 'fui', expected: ['fui']},
+            {word: 'pues', expected: ['pues']},
+
+        ]
+
+        examples.forEach(
+            (example) => {
+                it(`should separate ${example.word} as ${example.expected}`, () => {
+                    expect(cutter.cut(example.word)).toEqual(example.expected)
+                });
+            }
+        )
+    });
+
+    describe('Rule 6: hiatus', () => {
+        const examples: { word: string; expected: string[] }[] = [
+            {word: 'oeste', expected: ['o', 'es', 'te']},
+            {word: 'boa', expected: ['bo', 'a']}
         ]
 
         examples.forEach(
