@@ -51,30 +51,26 @@ class Word {
     }
 
     hasDigraphAfter(pos: number): boolean {
-        const digraphs = new Digraphs()
         let candidate = this.nextSubstr(pos, 2);
-        return digraphs.includes(candidate);
+        return new Digraphs().includes(candidate);
     }
 
     hasInseparableGroupAfter(pos: number): boolean {
-        const groups = new InseparableGroups()
-        return groups.includes(this.nextSubstr(pos, 2));
+        return new InseparableGroups().includes(this.nextSubstr(pos, 2));
     }
 
     hasConsonantsAfter(pos: number, size: number) {
-        const vowels = new Vowels();
         const items = this
             .nextSubstr(pos, size)
             .split('')
-            .filter(item => !vowels.includes(item))
+            .filter(item => !new Vowels().includes(item))
 
         return items.length == size
     }
 
     isDiptongue(pos: number) {
-        const diptongues = new Diptongues()
         const candidate = this.word.substring(pos, pos + 2);
-        return diptongues.contains(candidate);
+        return new Diptongues().contains(candidate);
 
     }
 
@@ -87,35 +83,37 @@ class SyllableCutter {
     private vowels = new Vowels();
 
     cut(wordToCut: string): string[] {
+        const word = new Word(wordToCut)
+
         let parts = [];
         let part = '';
-        const word = new Word(wordToCut)
         const lettersQueue = word.letters()
 
         while (lettersQueue.length > 0) {
             const letter = lettersQueue.shift()!
 
-            part += letter;
-
             const pos = word.length() - lettersQueue.length - 1
 
-            if (this.vowels.includes(letter)) {
-                if (word.hasDigraphAfter(pos)) {
-                    part += ''
-                } else if (word.hasInseparableGroupAfter(pos)) {
-                    part += ''
-                } else if (word.isDiptongue(pos)) {
-                    part += lettersQueue.shift()!
-                } else if (word.hasConsonantsAfter(pos, 3)) {
-                    part += lettersQueue.shift()! + lettersQueue.shift()!;
-                } else if (word.hasConsonantsAfter(pos, 2)) {
-                    part += lettersQueue.shift();
-                } else {
-                    part += ''
-                }
-                parts.push(part)
-                part = ''
+            if (!this.vowels.includes(letter)) {
+                part += letter
+                continue
             }
+
+            if (word.hasDigraphAfter(pos)) {
+                part += letter
+            } else if (word.hasInseparableGroupAfter(pos)) {
+                part += letter
+            } else if (word.isDiptongue(pos)) {
+                part += letter + lettersQueue.shift()!
+            } else if (word.hasConsonantsAfter(pos, 3)) {
+                part += letter + lettersQueue.shift()! + lettersQueue.shift()!;
+            } else if (word.hasConsonantsAfter(pos, 2)) {
+                part += letter + lettersQueue.shift();
+            } else {
+                part += letter
+            }
+            parts.push(part)
+            part = ''
         }
 
         const remaining = part + lettersQueue.join('')
