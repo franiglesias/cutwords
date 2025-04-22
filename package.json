@@ -1,0 +1,21 @@
+{
+  "name": "cutwords",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest",
+    "build": "tsc",
+    "lint": "biome lint .",
+    "format": "biome format . --write"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "biome": "^0.2.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
+  }
+}
