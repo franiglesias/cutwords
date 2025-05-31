@@ -1,14 +1,13 @@
 # Spanish Syllable Separator
 
-This is an exercise to practice TDD focusing on the selection of examples. The nature of the problem adds some difficult to choose the right examples. This happens because several separation rules can be applied to the same word. This can require more than one reason for a test to fail.
+This is an exercise to practice TDD, focusing on the selection of examples. The nature of the problem adds some difficult to choose the right examples. This happens because several separation rules can be applied to the same word. This can require more than one reason for a test to fail.
 
 The goal of the exercise is to help you develop a sense for identifying good examples for making new tests that can fail for a unique reason.
 
 ## The Challenge
 
 Imagine that you are working in a text visualization tool that requires hyphenation. To achieve that, you will need an algorithm to separate Spanish words into syllables.
-The 
-Spanish language has a bunch of rules for separating a word into Syllables. They are described in different ways depending on the source of information. We decided to use the following, adapted from this document by [Instituto Cervantes](https://cvc.cervantes.es/aula/didactired/anteriores/octubre_08/06102008_05.htm)
+The Spanish language has a bunch of rules for separating a word into Syllables. They are described in different ways depending on the source of information. We decided to use the following, adapted from this document by [Instituto Cervantes](https://cvc.cervantes.es/aula/didactired/anteriores/octubre_08/06102008_05.htm)
 
 ### Rule 1
 
