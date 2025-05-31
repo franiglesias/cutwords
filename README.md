@@ -7,6 +7,7 @@ The goal of the exercise is to help you develop a sense for identifying good exa
 ## The Challenge
 
 Imagine that you are working in a text visualization tool that requires hyphenation. To achieve that, you will need an algorithm to separate Spanish words into syllables.
+
 The Spanish language has a bunch of rules for separating a word into Syllables. They are described in different ways depending on the source of information. We decided to use the following, adapted from this document by [Instituto Cervantes](https://cvc.cervantes.es/aula/didactired/anteriores/octubre_08/06102008_05.htm)
 
 ### Rule 1
